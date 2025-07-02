@@ -1,4 +1,4 @@
-name: OnePlus_ACE5_Kernel_118-ShirokoNeko-Success
+name: 一加 ace5 debug log kernel
 
 on:
   workflow_dispatch:
@@ -12,7 +12,7 @@ env:
   CPUD: 'pineapple'
   ANDROID_VERSION: 'android14'
   KERNEL_VERSION: '6.1'
-  KERNEL_NAME: 'ShirokoNeko-進んで_未来は～'
+  KERNEL_NAME: 'ShirokoNeko-debug_log--kernel_userdebug'
   KERNELSU_VARIANT: 'SukiSU-Ultra'
   KERNELSU_VERSION: 'main'
   SUSFS_ENABLED: '启用'
@@ -126,6 +126,26 @@ jobs:
       - name: 配置内核选项
         working-directory: ${{ env.WORKSPACE_DIR }}/kernel_platform
         run: |
+          echo "CONFIG_DEBUG_KERNEL=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_DEBUG_INFO=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_DEBUG_FS=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_KALLSYMS=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_KALLSYMS_ALL=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_FRAME_POINTER=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_MAGIC_SYSRQ=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_PANIC_ON_OOPS=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_DEBUG_ATOMIC_SLEEP=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #####################区分##############################
+          echo "CONFIG_PSTORE=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_PSTORE_CONSOLE=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_PSTORE_RAM=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_PSTORE_DEFLATE_COMPRESS=y" >> ./common/arch/arm64/configs/gki_defconfig
+          ##################再次区分QwQ###########################
+          echo "CONFIG_PRINTK=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_PRINTK_SAVE_LOG=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_PRINTK_TIME=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_LOG_BUF_SHIFT=21" >> ./common/arch/arm64/configs/gki_defconfig
+          ################上面为内核debug选项( ‘-ωก̀ )#################
           echo "CONFIG_KSU=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KPM=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> ./common/arch/arm64/configs/gki_defconfig

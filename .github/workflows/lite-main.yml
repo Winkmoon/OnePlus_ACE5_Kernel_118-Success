@@ -1,4 +1,4 @@
-name: OnePlus_ACE5_Kernel_118-kernelsu nonsuki
+name: ACE5_Kernel-kernelsu nonsuki
 
 on:
   workflow_dispatch:

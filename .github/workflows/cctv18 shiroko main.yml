@@ -135,7 +135,7 @@ jobs:
             cd ./common
             git apply -p1 < 001-lz4.patch || true
             patch -p1 < 002-zstd.patch || true
-            if
+            fi
           
           
       - name: 添加 ksu 配置项

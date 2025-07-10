@@ -115,7 +115,6 @@ jobs:
             sed -i 's/ -dirty//g' "$f"
             sed -i '$i res=$(echo "$res" | sed '\''s/-dirty//g'\'')' "$f"
           done
-
       - name: 添加原版KernelSU
         id: ksu_version
         run: |

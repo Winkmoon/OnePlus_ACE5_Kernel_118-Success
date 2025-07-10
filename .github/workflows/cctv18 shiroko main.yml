@@ -109,6 +109,7 @@ jobs:
           repo init -u https://github.com/OnePlusOSS/kernel_manifest.git -b oneplus/sm8650 -m oneplus_ace5.xml --depth=1
           repo sync
           echo "正在去除 ABI 保护 & 去除 dirty 后缀..."
+          cd ~/kernel_workspace/
           rm common/android/abi_gki_protected_exports_* || true
           for f in common/scripts/setlocalversion; do
             sed -i 's/ -dirty//g' "$f"

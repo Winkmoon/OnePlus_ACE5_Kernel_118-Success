@@ -77,22 +77,13 @@ jobs:
               sed -i 's/ -dirty//g' "$script_path"
             fi
           done
-      
-      - name: 设置 KernelSU 分支
-        id: setup_branch
-        run: |
-          if [[ "${{ env.KERNELSU_VARIANT }}" == "SukiSU-Ultra" && "${{ env.KERNELSU_VERSION }}" == "main" ]]; then
-            echo "BRANCH=-s susfs-main" >> $GITHUB_ENV
-          else
-            echo "BRANCH=" >> $GITHUB_ENV
-          fi
 
       - name: 添加 KernelSU原版
         id: ksu_version
         working-directory: ${{ env.WORKSPACE_DIR }}/kernel_platform
         run: |
 
-          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/refs/heads/main/kernel/setup.sh" | bash ${{ env.BRANCH }}
+          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/refs/heads/main/kernel/setup.sh" | bash
           
           cd ./KernelSU
           KSU_VERSION=$(expr $(/usr/bin/git rev-list --count main) "+" 10606)
@@ -100,28 +91,6 @@ jobs:
           echo "ksuver=$KSU_VERSION" >> $GITHUB_OUTPUT
           
           sed -i "s/DKSU_VERSION=12800/DKSU_VERSION=$KSU_VERSION/" kernel/Makefile
-
-      #- name: 准备和应用补丁
-        #working-directory: ${{ env.WORKSPACE_DIR }}
-        #run: |
-          
-          #git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}
-          #git clone https://github.com/ShirkNeko/SukiSU_patch.git
-          
-          #cd kernel_platform
-          
-          #cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch ./common/
-          #cp -r ../susfs4ksu/kernel_patches/fs/* ./common/fs/
-          #cp -r ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
-          
-          #cd ./common
-          #patch -p1 < 50_add_susfs_in_gki-${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch || true
-          
-          #cp ../../SukiSU_patch/69_hide_stuff.patch ./
-          #patch -p1 -F 3 < 69_hide_stuff.patch
-          
-          #cp ../../SukiSU_patch/hooks/new_hooks.patch ./
-          #patch -p1 -F 3 < new_hooks.patch
 
       - name: 配置内核选项
         working-directory: ${{ env.WORKSPACE_DIR }}/kernel_platform
@@ -252,36 +221,3 @@ jobs:
         with:
           name: Kernel_ZIP_Artifacts
           path: ./release_zips
-         
-      - name: 创建发布
-        id: create_release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: "build-${{ github.run_id }}"
-          name: "OnePlus_ACE5 Build ${{ github.run_number }}"
-          body: |
-            每日自动编译 SukiSU-Ultra 内核
-            - 机型： 一加ACE5
-            - 特性：MKSU+SUSFS+VFS+KPM
-            - 编译时间: ${{ github.event.repository.updated_at }}
-            - 内核版本: ${{ needs.build.outputs.ksuver }}
-            - 推荐管理器：[SukiSU-Ultra](https://github.com/ShirkNeko/SukiSU-Ultra/releases)
-            - 如果构建的内核版本没变，不必更新！
-            - AnyKernel3文件使用 AnyKernel3/Recovery/TWRP 刷入
-            - Image文件解压后使用 Fastboot 刷入
-          draft: false
-          prerelease: false
-          files: |
-            release_zips/AnyKernel3_KernelSU_*.zip
-            release_zips/Image_KernelSU_*.zip
-
-      - name: 清理旧版本
-        uses: dev-drprasad/delete-older-releases@v0.3.4
-        continue-on-error: true
-        timeout-minutes: 5
-        with:
-          keep_latest: ${{ env.RETENTION_COUNT }}
-          delete_tags: true
-          delete_tag_pattern: 'build-*'
-        env:
-          GITHUB_TOKEN: ${{ github.token }}

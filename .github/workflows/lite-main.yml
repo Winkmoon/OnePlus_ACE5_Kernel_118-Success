@@ -83,7 +83,7 @@ jobs:
         working-directory: ${{ env.WORKSPACE_DIR }}/kernel_platform
         run: |
 
-          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/refs/heads/main/kernel/setup.sh" | bash
+          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/refs/heads/main/kernel/setup.sh" | bash main
           
           cd ./KernelSU
           KSU_NUM_VERSION=12900

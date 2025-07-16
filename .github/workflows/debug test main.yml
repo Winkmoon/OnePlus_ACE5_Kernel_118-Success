@@ -1,4 +1,4 @@
-name: 一加 ace5 debug log kernel
+name: 一加 ace5 debug re kernel
 
 on:
   workflow_dispatch:
@@ -12,7 +12,7 @@ env:
   CPUD: 'pineapple'
   ANDROID_VERSION: 'android14'
   KERNEL_VERSION: '6.1'
-  KERNEL_NAME: 'ShirokoNeko-debug_log--kernel_userdebug'
+  KERNEL_NAME: 'ShirokoNekoKernel/Xinran_v9SKy'
   KERNELSU_VARIANT: 'SukiSU-Ultra'
   KERNELSU_VERSION: 'main'
   SUSFS_ENABLED: '启用'
@@ -123,32 +123,50 @@ jobs:
           cp ../../SukiSU_patch/hooks/new_hooks.patch ./
           patch -p1 -F 3 < new_hooks.patch
 
+
+
+      - name: 集成 Re:Kernel 源码到内核目录（静态编译方式）
+        working-directory: ${{ env.WORKSPACE_DIR }}/kernel_platform
+        run: |
+          git clone https://github.com/Sakion-Team/Re-Kernel.git temprekernel --depth=1
+          mkdir -p ./common/drivers/rekernel
+          cp temprekernel/LKM-Source/* ./common/drivers/rekernel/
+          # 添加 Makefile 文件
+          echo 'obj-y += re-kernel.o' > ./common/drivers/rekernel/Makefile
+          # 添加 Kconfig 文件
+          echo 'config REKERNEL\n\tbool "Enable Re:Kernel"\n\tdefault y' > ./common/drivers/rekernel/Kconfig
+          # 注入 Kconfig 引用
+          echo 'source "drivers/rekernel/Kconfig"' >> ./common/drivers/Kconfig
+          
+
       - name: 配置内核选项
         working-directory: ${{ env.WORKSPACE_DIR }}/kernel_platform
         run: |
-          echo "CONFIG_DEBUG_KERNEL=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_DEBUG_INFO=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_DEBUG_FS=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_KALLSYMS=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_KALLSYMS_ALL=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_FRAME_POINTER=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_MAGIC_SYSRQ=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_PANIC_ON_OOPS=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_DEBUG_ATOMIC_SLEEP=y" >> ./common/arch/arm64/configs/gki_defconfig
+
+          echo "CONFIG_REKERNEL=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_DEBUG_KERNEL=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_DEBUG_INFO=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_DEBUG_FS=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_KALLSYMS=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_KALLSYMS_ALL=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_FRAME_POINTER=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_MAGIC_SYSRQ=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_PANIC_ON_OOPS=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_DEBUG_ATOMIC_SLEEP=y" >> ./common/arch/arm64/configs/gki_defconfig
           #####################区分##############################
-          echo "CONFIG_PSTORE=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_PSTORE_CONSOLE=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_PSTORE_RAM=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_PSTORE_DEFLATE_COMPRESS=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_PSTORE=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_PSTORE_CONSOLE=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_PSTORE_RAM=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_PSTORE_DEFLATE_COMPRESS=y" >> ./common/arch/arm64/configs/gki_defconfig
           ##################再次区分QwQ###########################
-          echo "CONFIG_PRINTK=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_PRINTK_SAVE_LOG=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_PRINTK_TIME=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_LOG_BUF_SHIFT=21" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_PRINTK=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_PRINTK_SAVE_LOG=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_PRINTK_TIME=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_LOG_BUF_SHIFT=21" >> ./common/arch/arm64/configs/gki_defconfig
           ################上面为内核debug选项( ‘-ωก̀ )#################
           echo "CONFIG_KSU=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KPM=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_KSU_SUSFS_SUS_SU=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KSU_MANUAL_HOOK=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KSU_SUSFS=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
@@ -173,7 +191,7 @@ jobs:
         run: |
           sed -i "/stable_scmversion_cmd/s/-maybe-dirty//g" ./build/kernel/kleaf/impl/stamp.bzl
           sed -i 's|echo "\$res"|echo "'"$(echo "${{ env.KERNEL_NAME }}" | sed 's/[\&/]/\\&/g')"'"|g' ./common/scripts/setlocalversion
-           
+
       - name: 构建内核
         working-directory: ${{ env.WORKSPACE_DIR }}
         run: |
@@ -222,6 +240,8 @@ jobs:
           mv oImage Image
           cp Image $GITHUB_WORKSPACE/AnyKernel3/Image
           cp Image $GITHUB_WORKSPACE/kernel_workspace/init_boot_Image.img
+
+          
       - name: 打包 AnyKernel3 (ZIP)
         run: |
           cd $GITHUB_WORKSPACE/AnyKernel3

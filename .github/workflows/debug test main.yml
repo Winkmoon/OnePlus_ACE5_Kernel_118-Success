@@ -125,25 +125,25 @@ jobs:
 
 
 
-      - name: 集成 Re:Kernel 源码到内核目录（静态编译方式）
-        working-directory: ${{ env.WORKSPACE_DIR }}/kernel_platform
-        run: |
-          git clone https://github.com/Sakion-Team/Re-Kernel.git temprekernel --depth=1
-          mkdir -p ./common/drivers/rekernel
-          cp temprekernel/LKM-Source/* ./common/drivers/rekernel/
+      #- name: 集成 Re:Kernel 源码到内核目录（静态编译方式）
+        #working-directory: ${{ env.WORKSPACE_DIR }}/kernel_platform
+        #run: |
+          #git clone https://github.com/Sakion-Team/Re-Kernel.git temprekernel --depth=1
+          #mkdir -p ./common/drivers/rekernel
+          #cp temprekernel/LKM-Source/* ./common/drivers/rekernel/
           # 添加 Makefile 文件
-          echo 'obj-y += re-kernel.o' > ./common/drivers/rekernel/Makefile
+          #echo 'obj-y += re-kernel.o' > ./common/drivers/rekernel/Makefile
           # 添加 Kconfig 文件
-          echo 'config REKERNEL\n\tbool "Enable Re:Kernel"\n\tdefault y' > ./common/drivers/rekernel/Kconfig
+          #echo 'config REKERNEL\n\tbool "Enable Re:Kernel"\n\tdefault y' > ./common/drivers/rekernel/Kconfig
           # 注入 Kconfig 引用
-          echo 'source "drivers/rekernel/Kconfig"' >> ./common/drivers/Kconfig
+          #echo 'source "drivers/rekernel/Kconfig"' >> ./common/drivers/Kconfig
           
 
       - name: 配置内核选项
         working-directory: ${{ env.WORKSPACE_DIR }}/kernel_platform
         run: |
 
-          echo "CONFIG_REKERNEL=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #echo "CONFIG_REKERNEL=y" >> ./common/arch/arm64/configs/gki_defconfig
           #echo "CONFIG_DEBUG_KERNEL=y" >> ./common/arch/arm64/configs/gki_defconfig
           #echo "CONFIG_DEBUG_INFO=y" >> ./common/arch/arm64/configs/gki_defconfig
           #echo "CONFIG_DEBUG_FS=y" >> ./common/arch/arm64/configs/gki_defconfig
@@ -193,12 +193,12 @@ jobs:
           sed -i 's|echo "\$res"|echo "'"$(echo "${{ env.KERNEL_NAME }}" | sed 's/[\&/]/\\&/g')"'"|g' ./common/scripts/setlocalversion
 
 
-      - name: 注册 Re:Kernel 到 modules.bzl 构建列表
-        working-directory: ${{ env.WORKSPACE_DIR }}/kernel_platform/common
-        run: |
-          sed -i '/gki_module_group = 
+      #- name: 注册 Re:Kernel 到 modules.bzl 构建列表
+        #working-directory: ${{ env.WORKSPACE_DIR }}/kernel_platform/common
+        #run: |
+          #sed -i '/gki_module_group = 
 
-          \[/a \ \ \ \ "drivers/rekernel/re-kernel.o",' modules.bzl
+          #\[/a \ \ \ \ "drivers/rekernel/re-kernel.o",' modules.bzl
 
           
 

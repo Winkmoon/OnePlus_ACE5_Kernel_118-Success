@@ -12,7 +12,7 @@ env:
   CPUD: 'pineapple'
   ANDROID_VERSION: 'android14'
   KERNEL_VERSION: '6.1'
-  KERNEL_NAME: 'ShirokoNeko-8gen3_Xinran_V6-Dev'
+  KERNEL_NAME: '-ShirokoNeko/XinRan_OS840-CUSTOMIZED'
   KERNELSU_VARIANT: 'SukiSU-Ultra'
   KERNELSU_VERSION: 'main'
   SUSFS_ENABLED: '启用'

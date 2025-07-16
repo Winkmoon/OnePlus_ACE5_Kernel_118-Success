@@ -192,6 +192,16 @@ jobs:
           sed -i "/stable_scmversion_cmd/s/-maybe-dirty//g" ./build/kernel/kleaf/impl/stamp.bzl
           sed -i 's|echo "\$res"|echo "'"$(echo "${{ env.KERNEL_NAME }}" | sed 's/[\&/]/\\&/g')"'"|g' ./common/scripts/setlocalversion
 
+
+      - name: 注册 Re:Kernel 到 modules.bzl 构建列表
+        working-directory: ${{ env.WORKSPACE_DIR }}/kernel_platform/common
+        run: |
+          sed -i '/gki_module_group = 
+
+          \[/a \ \ \ \ "drivers/rekernel/re-kernel.o",' modules.bzl
+
+          
+
       - name: 构建内核
         working-directory: ${{ env.WORKSPACE_DIR }}
         run: |

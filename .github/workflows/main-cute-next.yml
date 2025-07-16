@@ -14,7 +14,7 @@ env:
   CPUD: 'pineapple'
   ANDROID_VERSION: 'android14'
   KERNEL_VERSION: '6.1'
-  KERNEL_NAME: 'ShirokoNeko-8gen3-XinRan-V5-KSUNEXT'
+  KERNEL_NAME: 'ShirokoNeko-8gen3-XinRan-V8Lite-KSUNEXT'
   KERNELSU_VARIANT: 'KernelSU-Next'
   KERNELSU_VERSION: 'main'
   SUSFS_ENABLED: '启用'
@@ -129,7 +129,7 @@ jobs:
           echo "CONFIG_KSU=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_KPM=y" >> ./common/arch/arm64/configs/gki_defconfig
           #echo "CONFIG_KSU_SUSFS_SUS_SU=y" >> ./common/arch/arm64/configs/gki_defconfig
-          #echo "CONFIG_KSU_MANUAL_HOOK=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_KSU_MANUAL_HOOK=y" >> ./common/arch/arm64/configs/gki_defconfig
           #echo "CONFIG_KSU_SUSFS=y" >> ./common/arch/arm64/configs/gki_defconfig
           #echo "CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
           #echo "CONFIG_KSU_SUSFS_SUS_PATH=y" >> ./common/arch/arm64/configs/gki_defconfig
@@ -195,16 +195,16 @@ jobs:
             exit 1
           fi
 
-      #- name: 糖画画笔挥舞中 (´-ωก̀ )
-        #run: |
-          #cd kernel_workspace/kernel_platform/out/msm-kernel-${{ env.CPUD }}-gki/dist
+      - name: 糖画画笔挥舞中 (´-ωก̀ )
+        run: |
+          cd kernel_workspace/kernel_platform/out/msm-kernel-${{ env.CPUD }}-gki/dist
           #curl -LO https://github.com/ShirkNeko/SukiSU_KernelPatch_patch/releases/download/0.11-beta/patch_linux
           #chmod +x patch_linux
           #./patch_linux
-          #rm -f Image
-          #mv oImage Image
-          #cp Image $GITHUB_WORKSPACE/AnyKernel3/Image
-          #cp Image $GITHUB_WORKSPACE/kernel_workspace/init_boot_Image.img
+          rm -f Image
+          mv oImage Image
+          cp Image $GITHUB_WORKSPACE/AnyKernel3/Image
+          cp Image $GITHUB_WORKSPACE/kernel_workspace/init_boot_Image.img
 
       - name: 礼物盒包装中 (◕‿◕)♡
         run: |
